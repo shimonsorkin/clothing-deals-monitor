@@ -1,0 +1,23 @@
+# ── Your sizes ──────────────────────────────────────────────────────────────
+# Tokens are matched against each Shopify variant's option values.
+# Matching: collapse whitespace to single spaces + lowercase, then PREFIX match.
+# Spaces are KEPT (not stripped) so "S /" hits a shirt but not a "S/M" cap.
+#   "46 (IT) / 40(FR) / 30(UK-US)"        -> "46 (it) / ..."   MATCH "46 (IT)"
+#   "S / 44-46 (IT-EU) / 34-36 (US-UK)"   -> "s / 44-46 ..."   MATCH "S /"
+#   "S/M" (cap)                           -> "s/m"             NO match for "S /"
+#   "XS / ..." , "XXL / ..."              -> "xs / ..."        NO match for "S /"
+# A shirt has no "46 (IT)" variant and trousers have no "S /" variant, so a
+# single flat token list disambiguates itself — no per-category config needed.
+size_tokens:
+  - "46 (IT)"     # брюки IT 46
+  - "S /"         # поло / рубашки / трикотаж — S
+
+# ── Stores ──────────────────────────────────────────────────────────────────
+stores:
+  - name: "Pini Parma"
+    adapter: shopify
+    base_url: "https://www.piniparma.com"
+    sale_collections: ["fw25-sale", "archives"]
+    require_discount: true     # alert/list only when compare_at_price > price
+    currency_symbol: "€"
+    enabled: true

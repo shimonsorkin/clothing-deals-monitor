@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Мои скидки</title>
+<style>
+  :root {
+    --bg:#faf8f5; --ink:#1a1714; --muted:#7c736a; --line:#e7e1d8;
+    --card:#fffdfa; --accent:#9c1c2e;
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  }
+  header {
+    padding:48px 24px 28px; border-bottom:1px solid var(--line); text-align:center;
+  }
+  h1 {
+    margin:0; font:600 30px/1.2 Georgia,"Times New Roman",serif;
+    letter-spacing:.01em;
+  }
+  .sub { margin-top:8px; color:var(--muted); font-size:14px; }
+  .wrap { max-width:1180px; margin:0 auto; padding:24px; }
+  .filters {
+    display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+    padding:18px 0 26px;
+  }
+  .chip {
+    border:1px solid var(--line); background:var(--card); color:var(--ink);
+    padding:7px 15px; border-radius:999px; font-size:13px; cursor:pointer;
+    transition:.15s;
+  }
+  .chip[aria-pressed="true"] {
+    background:var(--ink); color:var(--bg); border-color:var(--ink);
+  }
+  .grid {
+    display:grid; gap:22px;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  }
+  .card {
+    background:var(--card); border:1px solid var(--line); border-radius:10px;
+    overflow:hidden; display:flex; flex-direction:column; text-decoration:none;
+    color:inherit; transition:transform .15s, box-shadow .15s;
+  }
+  .card:hover { transform:translateY(-3px); box-shadow:0 10px 26px rgba(0,0,0,.08); }
+  .ph { aspect-ratio:3/4; background:#efe9e0 center/cover no-repeat; }
+  .body { padding:14px 15px 17px; display:flex; flex-direction:column; gap:7px; flex:1; }
+  .store { font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+  .name { font:500 15px/1.35 Georgia,serif; }
+  .size { font-size:13px; color:var(--muted); }
+  .price { margin-top:auto; display:flex; align-items:baseline; gap:9px; flex-wrap:wrap; }
+  .now { font-weight:700; font-size:18px; }
+  .was { color:var(--muted); text-decoration:line-through; font-size:13px; }
+  .pct {
+    color:#fff; background:var(--accent); font-size:12px; font-weight:700;
+    padding:2px 8px; border-radius:6px;
+  }
+  .empty { text-align:center; color:var(--muted); padding:80px 0; }
+  footer { text-align:center; color:var(--muted); font-size:12px; padding:40px 0 60px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Мои скидки</h1>
+  <div class="sub">Только мой размер · только со скидкой · обновлено 2026-05-19 21:13 UTC</div>
+</header>
+<div class="wrap">
+  <div class="filters" id="filters"><button class="chip" data-store="*" aria-pressed="true">Все</button><button class="chip" data-store="Pini Parma" aria-pressed="false">Pini Parma</button></div>
+  <div class="grid" id="grid"><a class="card" href="https://www.piniparma.com/products/grey-hawaiana-linen-shirt-made-in-italy" target="_blank" rel="noopener" data-store="Pini Parma"><div class="ph" style="background-image:url('https://cdn.shopify.com/s/files/1/1383/8317/products/greyhawaianlinenshirt_1.jpg?v=1706541214')"></div><div class="body"><div class="store">Pini Parma</div><div class="name">Grey Hawaiana linen shirt - Made in Italy</div><div class="size">Размер: S / 46 (IT-EU) / 36 (US-UK)</div><div class="price"><span class="now">€76.30</span><span class="was">€109.00</span><span class="pct">−30%</span></div></div></a><a class="card" href="https://www.piniparma.com/products/brown-polo-shirt-made-in-italy" target="_blank" rel="noopener" data-store="Pini Parma"><div class="ph" style="background-image:url('https://cdn.shopify.com/s/files/1/1383/8317/products/brownpolopique_1.jpg?v=1693296064')"></div><div class="body"><div class="store">Pini Parma</div><div class="name">Brown polo shirt - Made in Italy</div><div class="size">Размер: S / 38-39 / 15-15 ½</div><div class="price"><span class="now">€83.30</span><span class="was">€119.00</span><span class="pct">−30%</span></div></div></a><a class="card" href="https://www.piniparma.com/products/grey-popover-polo-shirt-made-in-italy" target="_blank" rel="noopener" data-store="Pini Parma"><div class="ph" style="background-image:url('https://cdn.shopify.com/s/files/1/1383/8317/products/grey_popover_polo_shirt_-_details.jpg?v=1649255409')"></div><div class="body"><div class="store">Pini Parma</div><div class="name">Grey popover polo shirt - Made in Italy</div><div class="size">Размер: S / 38-39 / 15-15 ½</div><div class="price"><span class="now">€83.30</span><span class="was">€119.00</span><span class="pct">−30%</span></div></div></a><a class="card" href="https://www.piniparma.com/products/sand-palm-hawaiana-shirt-made-in-italy" target="_blank" rel="noopener" data-store="Pini Parma"><div class="ph" style="background-image:url('https://cdn.shopify.com/s/files/1/1383/8317/files/sand-hawaiana-shirt-1.webp?v=1739881391')"></div><div class="body"><div class="store">Pini Parma</div><div class="name">Sand hawaiana shirt - Made in Italy</div><div class="size">Размер: S / 46 (IT-EU) / 36 (US-UK)</div><div class="price"><span class="now">€83.30</span><span class="was">€119.00</span><span class="pct">−30%</span></div></div></a><a class="card" href="https://www.piniparma.com/products/beige-corduroy-milano-trousers-made-in-italy" target="_blank" rel="noopener" data-store="Pini Parma"><div class="ph" style="background-image:url('https://cdn.shopify.com/s/files/1/1383/8317/files/camel-corduroy-trousers-sirmione_2.jpg?v=1700056640')"></div><div class="body"><div class="store">Pini Parma</div><div class="name">Beige corduroy Sirmione trousers - Made in Italy</div><div class="size">Размер: 46 (IT) / 40(FR) / 30(UK-US)</div><div class="price"><span class="now">€132.30</span><span class="was">€189.00</span><span class="pct">−30%</span></div></div></a><a class="card" href="https://www.piniparma.com/products/light-grey-corduroy-milano-trousers-made-in-italy" target="_blank" rel="noopener" data-store="Pini Parma"><div class="ph" style="background-image:url('https://cdn.shopify.com/s/files/1/1383/8317/files/light-grey-sirmione-corduroy-trousers_3.jpg?v=1700056634')"></div><div class="body"><div class="store">Pini Parma</div><div class="name">Light grey corduroy Sirmione trousers - Made in Italy</div><div class="size">Размер: 46 (IT) / 40(FR) / 30(UK-US)</div><div class="price"><span class="now">€132.30</span><span class="was">€189.00</span><span class="pct">−30%</span></div></div></a><a class="card" href="https://www.piniparma.com/products/off-white-corduroy-milano-trousers-made-in-italy" target="_blank" rel="noopener" data-store="Pini Parma"><div class="ph" style="background-image:url('https://cdn.shopify.com/s/files/1/1383/8317/files/off-white-corduroy-sirmione_3.jpg?v=1700056580')"></div><div class="body"><div class="store">Pini Parma</div><div class="name">Off-white corduroy Sirmione trousers - Made in Italy</div><div class="size">Размер: 46 (IT) / 40(FR) / 30(UK-US)</div><div class="price"><span class="now">€132.30</span><span class="was">€189.00</span><span class="pct">−30%</span></div></div></a><a class="card" href="https://www.piniparma.com/products/white-cargo-trousers-made-in-italy" target="_blank" rel="noopener" data-store="Pini Parma"><div class="ph" style="background-image:url('https://cdn.shopify.com/s/files/1/1383/8317/files/white-cargo-trousers.webp?v=1758182054')"></div><div class="body"><div class="store">Pini Parma</div><div class="name">White cargo trousers - Made in Italy</div><div class="size">Размер: 46 (IT) / 40(FR) / 30(UK-US)</div><div class="price"><span class="now">€143.20</span><span class="was">€179.00</span><span class="pct">−20%</span></div></div></a><a class="card" href="https://www.piniparma.com/products/dark-taupe-cashmere-round-neck-made-in-italy" target="_blank" rel="noopener" data-store="Pini Parma"><div class="ph" style="background-image:url('https://cdn.shopify.com/s/files/1/1383/8317/files/PINIFW2523462.webp?v=1755103043')"></div><div class="body"><div class="store">Pini Parma</div><div class="name">Dark taupe cashmere turtleneck – Made in italy</div><div class="size">Размер: S / 44-46 (IT-EU)/ 34-36 (US-UK)</div><div class="price"><span class="now">€319.20</span><span class="was">€399.00</span><span class="pct">−20%</span></div></div></a></div>
+  
+</div>
+<footer>9 позиций · автообновление каждые ~15 минут</footer>
+<script>
+  const grid = document.getElementById('grid');
+  document.getElementById('filters').addEventListener('click', e => {
+    const chip = e.target.closest('.chip'); if (!chip) return;
+    document.querySelectorAll('.chip').forEach(c =>
+      c.setAttribute('aria-pressed', c === chip));
+    const f = chip.dataset.store;
+    grid.querySelectorAll('.card').forEach(card => {
+      card.style.display = (f === '*' || card.dataset.store === f) ? '' : 'none';
+    });
+  });
+</script>
+</body>
+</html>
