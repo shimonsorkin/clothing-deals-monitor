@@ -1,7 +1,18 @@
 {
-  "updated": "2026-05-19 21:13 UTC",
-  "count": 9,
+  "updated": "2026-05-19 21:38 UTC",
+  "count": 11,
   "deals": [
+    {
+      "store": "Grandlemar",
+      "title": "Navy White Piped Cotton T-Shirt",
+      "size": "Small",
+      "url": "https://grandlemar.com/products/black-white-piped-cotton-t-shirt",
+      "price": 7900,
+      "compare_at_price": 13900,
+      "discount_pct": 43,
+      "currency": "€",
+      "image": "https://cdn.shopify.com/s/files/1/2574/2560/files/E-COM1694-Edit.jpg?v=1775806937"
+    },
     {
       "store": "Pini Parma",
       "title": "Grey Hawaiana linen shirt - Made in Italy",
@@ -100,6 +111,17 @@
       "discount_pct": 20,
       "currency": "€",
       "image": "https://cdn.shopify.com/s/files/1/1383/8317/files/PINIFW2523462.webp?v=1755103043"
+    },
+    {
+      "store": "Grandlemar",
+      "title": "White Oversized Bouclé T-Shirt",
+      "size": "Small",
+      "url": "https://grandlemar.com/products/white-oversized-boucle-t-shirt",
+      "price": 11900,
+      "compare_at_price": 13900,
+      "discount_pct": 14,
+      "currency": "€",
+      "image": "https://cdn.shopify.com/s/files/1/2574/2560/files/Grand-Le-Mar-White-Boucle-Cotton-T-Shirt-02.jpg?v=1743183889"
     }
   ]
 }

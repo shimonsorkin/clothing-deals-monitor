@@ -27,7 +27,7 @@ _SESSION = requests.Session()
 _SESSION.headers.update({"User-Agent": _UA, "Accept": "application/json"})
 
 _MAX_PAGES = 20          # safety cap per collection
-_PRODUCT_DELAY = 0.4     # polite gap between product fetches (seconds)
+_PRODUCT_DELAY = 0.2     # polite gap between product fetches (seconds)
 
 
 def _normalize(text: str) -> str:
@@ -53,14 +53,43 @@ def _get_json(url: str, params: dict | None = None, retries: int = 2):
     return None
 
 
-def _matched_size(variant: dict, norm_tokens: list[str]) -> str | None:
-    """Return the human-readable size if any option value prefix-matches."""
+def _matched_size(variant: dict, norm_tokens: list[str], mode: str) -> str | None:
+    """Return the human-readable size if any option value matches a token.
+
+    mode="prefix"   : option startswith token after normalization (default).
+                      Good for Pini Parma "46 (IT)", Natalino "S".
+    mode="contains" : token appears anywhere in normalized option. Required
+                      when the size we care about is mid-string, e.g. Grandlemar
+                      "W28 L32 (US) / 46 (EU)" — token "46 (EU)" hits.
+    """
     options = variant.get("options") or [variant.get("title", "")]
+    matcher = (str.__contains__ if mode == "contains" else str.startswith)
     for opt in options:
         norm = _normalize(opt)
-        if any(norm.startswith(tok) for tok in norm_tokens):
+        if any(matcher(norm, tok) for tok in norm_tokens):
             return str(opt)
     return None
+
+
+def _list_has_discount(product: dict) -> bool | None:
+    """Cheap pre-filter from the list endpoint variants.
+
+    Returns True if any variant looks marked down, False if list data proves
+    nothing is, None if the list endpoint doesn't expose enough to decide
+    (then the caller must fall back to the authoritative .js fetch).
+    """
+    variants = product.get("variants") or []
+    if not variants or "compare_at_price" not in variants[0]:
+        return None
+    for v in variants:
+        try:
+            cap = float(v.get("compare_at_price") or 0)
+            price = float(v.get("price") or 0)
+        except (ValueError, TypeError):
+            return None
+        if cap > 0 and cap > price:
+            return True
+    return False
 
 
 def _first_image(product: dict) -> str | None:
@@ -76,10 +105,19 @@ def _first_image(product: dict) -> str | None:
 
 
 def _product_deals(base: str, handle: str, store: str,
-                   norm_tokens: list[str], require_discount: bool,
-                   symbol: str) -> list[Deal]:
+                   norm_tokens: list[str], match_mode: str,
+                   require_discount: bool, symbol: str,
+                   block_types: list[str]) -> list[Deal]:
     data = _get_json(f"{base}/products/{handle}.js")
     if not data:
+        return []
+    # Substring-match against Shopify's `type` (and `tags`) — lets us exclude
+    # whole categories like jackets/coats even when their size string contains
+    # our token (e.g. Grandlemar jacket "36R (US) / 46 (EU)").
+    haystack = (
+        f"{data.get('type', '')} {' '.join(data.get('tags') or [])}".casefold()
+    )
+    if any(b for b in block_types if b in haystack):
         return []
     url = f"{base}/products/{handle}"
     image = _first_image(data)
@@ -88,7 +126,7 @@ def _product_deals(base: str, handle: str, store: str,
     for variant in data.get("variants", []):
         if not variant.get("available"):
             continue
-        size = _matched_size(variant, norm_tokens)
+        size = _matched_size(variant, norm_tokens, match_mode)
         if size is None:
             continue
         price = variant.get("price")
@@ -116,11 +154,17 @@ def collect(store: dict, size_tokens: list[str]) -> list[Deal]:
     base = store["base_url"].rstrip("/")
     require_discount = store.get("require_discount", True)
     symbol = store.get("currency_symbol", "")
+    match_mode = store.get("match_mode", "prefix")
+    block_types = [b.casefold() for b in (store.get("product_types_block") or [])]
     norm_tokens = [_normalize(t) for t in size_tokens]
+
+    # If a store has no dedicated sale collection (Natalino, Anglo-Italian),
+    # scan "all" and rely on require_discount to filter — slower but works.
+    collections = store.get("sale_collections") or ["all"]
 
     seen: set[str] = set()
     deals: list[Deal] = []
-    for collection in store.get("sale_collections", []):
+    for collection in collections:
         page = 1
         while page <= _MAX_PAGES:
             data = _get_json(
@@ -135,9 +179,14 @@ def collect(store: dict, size_tokens: list[str]) -> list[Deal]:
                 if not handle or handle in seen:
                     continue
                 seen.add(handle)
+                # When require_discount is on, skip a wasted .js fetch for
+                # products the list endpoint proves are at full price.
+                if require_discount and _list_has_discount(product) is False:
+                    continue
                 deals.extend(
                     _product_deals(base, handle, store["name"],
-                                   norm_tokens, require_discount, symbol)
+                                   norm_tokens, match_mode,
+                                   require_discount, symbol, block_types)
                 )
                 time.sleep(_PRODUCT_DELAY)
             page += 1

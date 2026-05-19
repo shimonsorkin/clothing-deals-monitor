@@ -1,23 +1,76 @@
-# ── Your sizes ──────────────────────────────────────────────────────────────
-# Tokens are matched against each Shopify variant's option values.
-# Matching: collapse whitespace to single spaces + lowercase, then PREFIX match.
-# Spaces are KEPT (not stripped) so "S /" hits a shirt but not a "S/M" cap.
-#   "46 (IT) / 40(FR) / 30(UK-US)"        -> "46 (it) / ..."   MATCH "46 (IT)"
-#   "S / 44-46 (IT-EU) / 34-36 (US-UK)"   -> "s / 44-46 ..."   MATCH "S /"
-#   "S/M" (cap)                           -> "s/m"             NO match for "S /"
-#   "XS / ..." , "XXL / ..."              -> "xs / ..."        NO match for "S /"
-# A shirt has no "46 (IT)" variant and trousers have no "S /" variant, so a
-# single flat token list disambiguates itself — no per-category config needed.
+# ── Default sizes (used by any store without its own `size_tokens`) ─────────
+# Tokens match against each Shopify variant's option value(s).
+# Normalization: collapse whitespace + lowercase. Then PREFIX match by default,
+# unless the store sets `match_mode: contains`. Spaces are KEPT so "S /"
+# matches a shirt but not a "S/M" cap.
 size_tokens:
   - "46 (IT)"     # брюки IT 46
-  - "S /"         # поло / рубашки / трикотаж — S
+  - "S /"         # поло/рубашки/трикотаж S
 
 # ── Stores ──────────────────────────────────────────────────────────────────
 stores:
+
+  # 1. Pini Parma — Shopify, dedicated sale collections, sizes like
+  #    "46 (IT) / 40(FR) / 30(UK-US)" for trousers and "S / 44-46 ..." for tops.
   - name: "Pini Parma"
     adapter: shopify
     base_url: "https://www.piniparma.com"
     sale_collections: ["fw25-sale", "archives"]
-    require_discount: true     # alert/list only when compare_at_price > price
+    require_discount: true
     currency_symbol: "€"
-    enabled: true
+    # size_tokens: inherited from defaults
+
+  # 2. Natalino — Shopify, NO sale collection currently → scan /collections/all.
+  #    Trouser sizes are waist inches: "28", "30", "32"... (IT 46 ≈ "30").
+  #    Top sizes: exact "S", "M", "L", "XL", "XXL".
+  - name: "Natalino"
+    adapter: shopify
+    base_url: "https://natalino.co"
+    sale_collections: ["all"]
+    require_discount: true
+    currency_symbol: "$"
+    size_tokens:
+      - "30"        # брюки (W30 ≈ твой IT 46; поправь на 28/32 если жмёт/висит)
+      - "S"         # верх — точное "S", не цепляет "XS"/"XXL"
+
+  # 3. Anglo-Italian — Shopify, /collections/sale empty → scan /collections/all.
+  #    Tailoring sizes: plain "46", "48", "50"... Tops: assumed S/M/L alpha.
+  - name: "Anglo-Italian"
+    adapter: shopify
+    base_url: "https://angloitalian.com"
+    sale_collections: ["all"]
+    require_discount: true
+    currency_symbol: "£"
+    size_tokens:
+      - "46"
+      - "S"
+
+  # 4. Grandlemar — Shopify, sale collection "the-archive".
+  #    Trouser size string is mid-string ("W28 L32 (US) / 46 (EU)") so we use
+  #    contains-mode. Tops use full words: "Small", "Medium", "Large"...
+  - name: "Grandlemar"
+    adapter: shopify
+    base_url: "https://grandlemar.com"
+    sale_collections: ["the-archive"]
+    require_discount: true
+    currency_symbol: "€"
+    match_mode: contains
+    size_tokens:
+      - "46 (EU)"
+      - "Small"
+    # User wants trousers + tops, not jackets/coats/suits. Their sizing also
+    # uses "46 (EU)" for chest size, so we need to drop them by product type.
+    # Substring match on `type` + `tags`, case-insensitive.
+    product_types_block: ["jacket", "coat", "suit", "blazer", "tuxedo"]
+
+  # 5. Cavour — headless Next.js (Brink Commerce). Prices loaded client-side,
+  #    so per-size price scraping isn't feasible without a browser. Cavour
+  #    rarely discounts (2–4 events/year), so we watch the *event*: ping
+  #    Telegram the moment /sale comes alive (404 → 200 with real content).
+  - name: "Cavour"
+    adapter: url_watch
+    watches:
+      - url: "https://www.cavour.com/sale"
+        label: "Sale page is live"
+        must_contain: "product"   # body sanity check
+        note: "🚨 Cavour: раздел /sale открылся — Cavour редко скидывает, посмотри сразу. <a href=\"https://www.cavour.com/sale\">Открыть</a>"

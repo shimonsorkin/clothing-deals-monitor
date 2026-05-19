@@ -17,13 +17,35 @@ Add a store = edit `config.yaml`. No code change for Shopify stores.
 
 ## Stores
 
-| Store | Platform | Adapter | Anti-bot | Cost |
-|---|---|---|---|---|
-| Pini Parma | Shopify | `shopify` | none | €0 |
+| Store | Platform | Adapter | Notes |
+|---|---|---|---|
+| Pini Parma | Shopify | `shopify` | sale collections `fw25-sale`, `archives` |
+| Natalino | Shopify | `shopify` | no sale collection — scans `all`, filters by discount |
+| Anglo-Italian | Shopify | `shopify` | same — `/collections/sale` is currently empty |
+| Grandlemar | Shopify | `shopify` | `the-archive` sale; `contains` match mode; blocks jacket/coat product types |
+| Cavour | headless (Brink/Shoplab) | `url_watch` | rare-sale brand → pings when `/sale` opens (no per-size data available without a browser) |
 
-Size matching (`config.yaml` → `size_tokens`): variant option is lowercased
-with whitespace removed, then prefix-matched. `"46 (IT)"` → trousers IT 46,
-`"S /"` → tops S. `XS`/`XXL` never false-match `S /`.
+### Per-store config knobs
+
+* `size_tokens` — override the global default for that store.
+* `match_mode: prefix` (default) or `contains` — prefix is safer (avoids `XS`
+  matching `S`); contains is required when the wanted size sits mid-string
+  (e.g. Grandlemar `"W28 L32 (US) / 46 (EU)"`).
+* `require_discount: true` — only alert when `compare_at_price > price`.
+* `sale_collections` — list of Shopify collection handles; defaults to `["all"]`.
+* `product_types_block` — substring blocklist over Shopify `type` + `tags`
+  (case-insensitive). Use for stores where the same size token would otherwise
+  bleed across categories you don't want (e.g. trouser-size `"46 (EU)"` also
+  matching jacket chest sizes).
+
+### Sizing primer (whitespace collapsed + lowercased, then matched)
+
+| Token | Matches | Doesn't match |
+|---|---|---|
+| `"46 (IT)"` (prefix) | `"46 (IT) / 40(FR) / 30(UK-US)"` | `"46 (IT-EU) / 36 (US-UK)"` (jacket) |
+| `"S /"` (prefix) | `"S / 44-46 (IT-EU)…"` | `"S/M"` cap, `"XS / …"`, `"XXL / …"` |
+| `"S"` (prefix) | exact `"S"` | `"XS"`, `"Small"` (use `"Small"` token) |
+| `"46 (EU)"` (contains) | `"W28 L32 (US) / 46 (EU)"` | `"45 (EU)"` |
 
 ## One-time setup (≈10 min, human steps)
 
