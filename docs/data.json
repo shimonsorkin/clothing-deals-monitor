@@ -1,6 +1,6 @@
 {
-  "updated": "2026-05-20 10:32 UTC",
-  "count": 11,
+  "updated": "2026-05-20 19:10 UTC",
+  "count": 10,
   "deals": [
     {
       "store": "Grandlemar",
@@ -45,17 +45,6 @@
       "discount_pct": 30,
       "currency": "€",
       "image": "https://cdn.shopify.com/s/files/1/1383/8317/products/grey_popover_polo_shirt_-_details.jpg?v=1649255409"
-    },
-    {
-      "store": "Pini Parma",
-      "title": "Sand hawaiana shirt - Made in Italy",
-      "size": "S / 46 (IT-EU) / 36 (US-UK)",
-      "url": "https://www.piniparma.com/products/sand-palm-hawaiana-shirt-made-in-italy",
-      "price": 8330,
-      "compare_at_price": 11900,
-      "discount_pct": 30,
-      "currency": "€",
-      "image": "https://cdn.shopify.com/s/files/1/1383/8317/files/sand-hawaiana-shirt-1.webp?v=1739881391"
     },
     {
       "store": "Pini Parma",
